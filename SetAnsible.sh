@@ -4,4 +4,4 @@ if [[ $# -ne 1 ]] ; then
     exit 1
 fi    
 
-ansible-playbook -i "$1.harshitsompura.online" main.yaml -e ansible_username=ec2-user -e ansible_password=DevOps321 -e component=$1
+ansible-playbook -i "$1.harshitsompura.online," main.yaml -e ansible_username=ec2-user -e ansible_password=DevOps321 -e component=$1
