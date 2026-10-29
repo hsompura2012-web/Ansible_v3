@@ -1,0 +1,29 @@
+
+- name: Disable nodejs module stream
+  command: dnf module disable redis -y
+
+- name: Enable nodeJs module stream
+  command: dnf module enable redis:7 -y
+
+- name: Install Redis
+  ansible.builtin.package:
+    name: redis
+    state: present
+
+- name: Replace all occurrences
+  ansible.builtin.replace:
+    path: /etc/redis/redis.conf
+    regexp: '127.0.0.1'
+    replace: '0.0.0.0' 
+
+- name: Replace all protected mode occurrences
+  ansible.builtin.replace:
+    path: /etc/redis/redis.conf
+    regexp: 'protected-mode yes'
+    replace: 'protected-mode no'     
+
+- name: Start and enable Redis service
+  ansible.builtin.service:
+    name: redis
+    state: started
+    enabled: yes    

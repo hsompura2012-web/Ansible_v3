@@ -1,0 +1,31 @@
+- name: Disable nodejs module stream
+  command: dnf module disable nodejs -y
+
+- name: Enable nodeJs module stream
+  command: dnf module enable nodejs:20 -y
+
+- name: Install nodejs
+  ansible.builtin.package:
+    name: nodejs
+    state: present
+
+- name: import comdown
+  ansible.builtin.include_role:
+    name: common
+    tasks_from: comdown
+
+- name: Install {{ component }} dependencies
+  community.general.npm:
+    path: /app
+    
+- name: Update {{ component }} systemd service file
+  ansible.builtin.copy:
+    src: "{{ component }}.service"
+    dest: /etc/systemd/system/{{ component }}.service    
+
+- name: Start and enable {{ component }} service
+  ansible.builtin.systemd:
+    name: "{{ component }}"
+    daemon_reload: true
+    state: started
+    enabled: yes     

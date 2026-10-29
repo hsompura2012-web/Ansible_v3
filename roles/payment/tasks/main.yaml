@@ -1,0 +1,30 @@
+- name: install python3 level package
+  ansible.builtin.package:
+      name: 
+        - python3.11-devel
+        - gcc
+        - make
+      state: present
+
+- name: import comdown content
+  ansible.builtin.include_role:
+    name: common
+    tasks_from: comdown
+
+- name: Install payment dependencies
+  ansible.builtin.pip:
+      requirements: /app/requirements.txt      
+
+- name: Update payment systemd service file
+  ansible.builtin.copy:
+      src: payment.service
+      dest: /etc/systemd/system/payment.service  
+
+- name: Start and enable payment service
+  ansible.builtin.systemd:
+      name: payment
+      daemon_reload: true
+      state: started
+      enabled: yes
+      
+                

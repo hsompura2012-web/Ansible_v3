@@ -1,0 +1,4 @@
+- name: User import comman content
+  ansible.builtin.include_role:
+    name: common
+    tasks_from: comcontent

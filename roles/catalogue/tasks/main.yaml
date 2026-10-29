@@ -1,0 +1,17 @@
+- name: MongoDB import comman content
+  ansible.builtin.include_role:
+    name: common
+    tasks_from: comcontent
+
+- name: Create MongoDB repo file
+  ansible.builtin.copy:
+    src: files/mongo.repo
+    dest: /etc/yum.repos.d/mongo.repo     
+
+- name: Install mongodb-mongosh
+  ansible.builtin.package:
+    name: mongodb-mongosh
+    state: present     
+
+- name: Load catalogue schema
+  ansible.builtin.shell: mongosh --host mongodb.harshitsompura.online </app/schema/catalogue.js

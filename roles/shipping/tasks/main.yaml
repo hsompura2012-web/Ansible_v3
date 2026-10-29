@@ -1,0 +1,48 @@
+- name: Install maven
+  ansible.builtin.package:
+    name: maven
+    state: present
+
+- name: import comman content
+  ansible.builtin.include_role:
+    name: common
+    tasks_from: comdown
+    
+- name: Build shipping service
+  args:
+    chdir: /app
+  ansible.builtin.shell: mvn clean package && mv target/shipping-1.0.jar shipping.jar
+
+- name: copy service file
+  ansible.builtin.copy:
+    src: shipping.service
+    dest: /etc/systemd/system/shipping.service
+
+- name: Start and enable shipping service
+  ansible.builtin.systemd:
+    name: shipping
+    daemon_reload: true
+    state: started
+    enabled: yes              
+
+- name: install mysql client
+  ansible.builtin.package:
+    name: mysql
+    state: present
+
+- name: Load schema
+  ansible.builtin.shell: mysql -h mysql.harshitsompura.online -uroot -pRoboShop@1 < /app/db/schema.sql
+
+- name: Load app-user schema
+  ansible.builtin.shell: mysql -h mysql.harshitsompura.online -uroot -pRoboShop@1 < /app/db/app-user.sql
+
+- name: Load master-data schema
+  ansible.builtin.shell: mysql -h mysql.harshitsompura.online -uroot -pRoboShop@1 < /app/db/master-data.sql
+
+
+- name: restart shipping service
+  ansible.builtin.systemd:
+    name: shipping
+    state: restarted  
+
+    

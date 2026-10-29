@@ -1,0 +1,26 @@
+
+- name: install golang
+  ansible.builtin.package:
+      name: golang
+      state: present
+
+- name: import comdown content
+  ansible.builtin.include_role:
+    name: common
+    tasks_from: comdown
+
+- name: Install dispatch dependencies
+  ansible.builtin.shell: cd /app && go mod init dispatch && go get && go build     
+
+
+- name: Update dispatch systemd service file
+  ansible.builtin.copy:
+      src: files/dispatch.service
+      dest: /etc/systemd/system/dispatch.service 
+
+- name: Start and enable dispatch service
+  ansible.builtin.systemd:
+      name: dispatch
+      daemon_reload: true
+      state: started
+      enabled: yes     

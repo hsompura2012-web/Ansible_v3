@@ -1,0 +1,14 @@
+
+- name: Install MySQL
+  ansible.builtin.package:
+    name: mysql-server
+    state: present
+
+- name: Start and enable MySQL service
+  ansible.builtin.service:
+    name: mysqld
+    state: started 
+    enabled: yes
+
+- name: Get the temporary password for MySQL root user
+  ansible.builtin.shell: mysql_secure_installation --set-root-pass RoboShop@1
